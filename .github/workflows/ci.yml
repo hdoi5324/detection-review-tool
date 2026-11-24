@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: No private integration references
+        run: |
+          # The README acknowledgements section is the one permitted
+          # platform mention; everything else must be clean.
+          if grep -rinE "squidle|sqapi|sqbot" src/ scripts/ config/ examples/ tests/ pyproject.toml; then
+            echo "Private integration reference leaked into public repo" >&2
+            exit 1
+          fi
+      - name: All Python files compile
+        run: python -m compileall -q src scripts tests
+      - name: Unit tests
+        run: |
+          pip install -e ".[dev]"
+          pytest tests/ -q

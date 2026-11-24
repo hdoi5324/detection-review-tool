@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stage 2 — Images</title>
+  {% include "_fonts.html" %}
+  <link rel="stylesheet" href="/static/app.css?v={{ asset_v }}" />
+</head>
+<body{% if not has_exemplars %} class="no-exemplars"{% endif %}>
+  {% include "_header.html" %}
+
+  {% if has_exemplars %}
+  <button type="button" id="btn-rail-toggle" class="rail-toggle ghost" aria-label="Hide class examples" title="Hide class examples">‹</button>
+  <aside class="exemplars" id="exemplars">
+    <h2>Class examples</h2>
+    {% for c in categories %}
+    <div class="ex-block">
+      <div class="ex-name">{{ c.name }}</div>
+      <div class="ex-row">
+        {% for e in c.exemplars %}
+        <img src="{{ e.url }}" alt="{{ c.name }}" />
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </aside>
+  {% endif %}
+
+  <section class="main-stage stage2" id="work-area">
+    <div class="stage2-chrome">
+      <div id="tour-start-hint" class="tour-start-hint" hidden>
+        <p class="hint">Press <strong>Start</strong> to begin this stage. Press <strong>Stop</strong> when you finish or need a break.</p>
+      </div>
+      <div class="toolbar-split">
+        <div class="toolbar toolbar-nav">
+          <div class="toolbar-lead">
+            {% include "_review_progress.html" %}
+            <div class="pager-group" role="navigation" aria-label="Images">
+              <button type="button" id="btn-prev-img" title="Previous image">‹ Prev</button>
+              <span id="img-info" class="pager-status">—</span>
+              <button type="button" id="btn-next-img" title="Next image">Next ›</button>
+            </div>
+          </div>
+          {% include "_class_filter.html" %}
+          {% include "_prob_filter.html" %}
+          <div class="status-filters">
+            Show
+            <label><input type="checkbox" id="show-clear" checked /> unreviewed</label>
+            <label><input type="checkbox" id="show-confirmed" checked /> confirmed</label>
+            <label><input type="checkbox" id="show-incorrect" checked /> ignored</label>
+            <label><input type="checkbox" id="flagged-only" /> flagged only</label>
+          </div>
+          {% include "_brightness.html" %}
+        </div>
+        <div class="toolbar toolbar-draw">
+          <button type="button" id="btn-confirm" class="primary" disabled title="Confirm selected detections">Confirm</button>
+          <span class="field-inline" id="draw-class-field">
+            <label for="draw-label">Class</label>
+            <select id="draw-label">
+              {% for c in categories %}
+              <option value="{{ c.name }}">{{ c.name }}</option>
+              {% endfor %}
+            </select>
+          </span>
+          <button type="button" id="btn-ignore" class="danger" disabled title="Ignore selected detections">Ignore</button>
+          <button type="button" id="btn-clear" disabled title="Undo selected detections">Undo</button>
+          <button type="button" id="btn-delete" class="danger" disabled title="Delete selected detections">Delete</button>
+          <button type="button" id="btn-flag" class="flag-btn toolbar-flag" disabled aria-pressed="false" title="Flag for review" aria-label="Flag for review">
+            <svg viewBox="0 0 1792 1792" width="14" height="14" aria-hidden="true">
+              <g transform="translate(0 1536) scale(1 -1)">
+                <path fill="currentColor" d="M1664 491v616q-169 -91 -306 -91q-82 0 -145 32q-100 49 -184 76.5t-178 27.5q-173 0 -403 -127v-599q245 113 433 113q55 0 103.5 -7.5t98 -26t77 -31t82.5 -39.5l28 -14q44 -22 101 -22q120 0 293 92zM320 1280q0 -35 -17.5 -64t-46.5 -46v-1266q0 -14 -9 -23t-23 -9h-64q-14 0 -23 9t-9 23v1266q-29 17 -46.5 46t-17.5 64q0 53 37.5 90.5t90.5 37.5t90.5 -37.5t37.5 -90.5zM1792 1216v-763q0 -39 -35 -57q-10 -5 -17 -9q-218 -116 -369 -116q-88 0 -158 35l-28 14q-64 33 -99 48t-91 29t-114 14q-102 0 -235.5 -44t-228.5 -102q-15 -9 -33 -9q-16 0 -32 8q-32 19 -32 56v742q0 35 31 55q35 21 78.5 42.5t114 52t152.5 49.5t155 19q112 0 209 -31t209 -86q38 -19 89 -19q122 0 310 112q22 12 31 17q31 16 62 -2q31 -20 31 -55z"/>
+              </g>
+            </svg>
+          </button>
+          <button type="button" id="btn-done-img" title="Mark image as done">Image Done</button>
+          <span id="img-reviewed" class="reviewed-badge off">Not reviewed</span>
+          <span id="img-done-count" class="muted"></span>
+          <span id="status-msg" class="muted"></span>
+        </div>
+      </div>
+      <div class="canvas-zoom-bar" aria-label="Canvas zoom">
+        <button type="button" id="img-zoom-out" class="zoom-btn" aria-label="Zoom out" title="Zoom out (mouse wheel)">−</button>
+        <span id="img-zoom-label" class="zoom-label" aria-live="polite">100%</span>
+        <button type="button" id="img-zoom-in" class="zoom-btn" aria-label="Zoom in" title="Zoom in (mouse wheel)">+</button>
+        <button type="button" id="img-zoom-reset" class="zoom-btn zoom-fit" aria-label="Fit image to page" title="Fit image to page">
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+            <path fill="currentColor" d="M3 3h7v2H5v5H3V3zm11 0h7v7h-2V5h-5V3zM3 14h2v5h5v2H3v-7zm16 0h2v7h-7v-2h5v-5z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="stage-scroll" id="stage-scroll">
+      <div class="canvas-wrap canvas-zoom-wrap" id="img-zoom-wrap">
+        <canvas id="img-canvas"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    window.REVIEW_STAGE = "stage2";
+    window.CATEGORIES = {{ categories | tojson }};
+    window.STAGE_TOUR = {{ config.stage2_tour | tojson }};
+    window.STAGE_TOUR_SEEN = {{ tour_seen | tojson }};
+    window.FINAL_REVIEW = {{ (final_review | default(false)) | tojson }};
+  </script>
+  <script src="/static/tour.js?v={{ asset_v }}"></script>
+  <script src="/static/review-common.js?v={{ asset_v }}"></script>
+  <script src="/static/stage2.js?v={{ asset_v }}"></script>
+</body>
+</html>

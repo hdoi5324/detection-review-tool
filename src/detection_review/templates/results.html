@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Results vs GT</title>
+  {% include "_fonts.html" %}
+  <link rel="stylesheet" href="/static/app.css?v={{ asset_v }}" />
+</head>
+<body>
+  {% include "_header.html" %}
+  <main class="results-page">
+    <div class="results-head">
+      <h1>Model complete</h1>
+      <div class="results-cta">
+        <a class="btn ghost" href="/stage1?mode=final">QA/QC review</a>
+        {% if not progress.complete %}
+        <a class="btn primary" href="/stage1">Next model →</a>
+        {% else %}
+        <a class="btn primary" href="/done">Finish study</a>
+        {% endif %}
+      </div>
+    </div>
+    {% if has_qaqc %}
+    <div class="compare-bar">
+      <span class="muted">Report compared to</span>
+      <div class="compare-toggle" role="group" aria-label="Report compared to">
+        <a class="btn {{ 'primary' if compare == 'qaqc' else 'ghost' }}" href="/results?compare=qaqc">QA/QC review</a>
+        <a class="btn {{ 'primary' if compare == 'timed' else 'ghost' }}" href="/results?compare=timed">Timed Review</a>
+      </div>
+    </div>
+    {% endif %}
+    {% if compare == "qaqc" %}
+    <p class="muted">Showing QA/QC review compared to ground truth.</p>
+    {% else %}
+    <p class="muted">Showing Timed Review compared to ground truth.</p>
+    {% endif %}
+    {% if gt or gt_original %}
+    <h2>Compared to ground truth</h2>
+    <p class="muted">
+      Model is the submitted predictions vs GT.
+      Human is the confirmed set from {{ 'QA/QC review' if compare == 'qaqc' else 'Timed Review' }} vs GT.
+      Precision / recall / F1 count a true positive when a GT box and a confirmed
+      box of the same class overlap with IoU ≥ {{ (gt or gt_original).iou_thresh }}
+      (one-to-one; highest IoU wins if several overlap).
+      AP / AP50 / AR@100 are COCO-style (IoU 0.50:0.95, max 100 detections per image).
+      Green change is an improvement; red is a regression.
+    </p>
+    <div class="table-wrap">
+      <table class="metrics-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Model</th>
+            <th>Human</th>
+            <th>Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in metric_rows %}
+          <tr>
+            <td>{{ row.label }}</td>
+            <td>{{ row.original }}</td>
+            <td>{{ row.reviewed }}</td>
+            <td class="delta {{ row.delta_class }}">{{ row.delta }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if class_rows %}
+    <h3>Per class</h3>
+    <p class="muted">GT is the number of ground-truth boxes for that class. Counts are TP / FP / FN.</p>
+    <div class="table-wrap">
+      <table class="metrics-table class-metrics">
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>GT</th>
+            <th>Model F1</th>
+            <th>Human F1</th>
+            <th>Δ F1</th>
+            <th>Model TP / FP / FN</th>
+            <th>Human TP / FP / FN</th>
+            <th>Δ TP</th>
+            <th>Δ FP</th>
+            <th>Δ FN</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in class_rows %}
+          <tr>
+            <td>{{ row.label }}</td>
+            <td>{{ row.gt_count }}</td>
+            <td>{{ row.original_f1 }}</td>
+            <td>{{ row.reviewed_f1 }}</td>
+            <td class="delta {{ row.delta_f1_class }}">{{ row.delta_f1 }}</td>
+            <td>{{ row.original_counts }}</td>
+            <td>{{ row.reviewed_counts }}</td>
+            <td class="delta {{ row.delta_tp_class }}">{{ row.delta_tp }}</td>
+            <td class="delta {{ row.delta_fp_class }}">{{ row.delta_fp }}</td>
+            <td class="delta {{ row.delta_fn_class }}">{{ row.delta_fn }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+    {% else %}
+    <p class="muted">No ground truth provided for this model.</p>
+    {% endif %}
+
+    <h2>Your edits</h2>
+    <div class="stat-grid">
+      {% set count_labels = {
+        "confirmed": "Confirmed",
+        "incorrect": "Ignored",
+        "unreviewed": "Unreviewed",
+        "added": "Added",
+        "resized": "Resized",
+        "deleted": "Deleted"
+      } %}
+      {% for key, val in (counts or {}).items() %}
+      <div class="stat-card">
+        <div class="stat-label">{{ count_labels.get(key, key) }}</div>
+        <div class="stat-value">{{ val }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <h2>Timing</h2>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Stage 1</div>
+        {% if timing.stage1 and timing.stage1.elapsed_sec is not none %}
+        <div class="stat-value">{{ "%.1f"|format(timing.stage1.elapsed_sec) }}s</div>
+        {% if n_images %}
+        <div class="stat-detail">{{ "%.1f"|format(timing.stage1.elapsed_sec / n_images) }}s per image</div>
+        {% endif %}
+        {% else %}
+        <div class="stat-value">—</div>
+        {% endif %}
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Stage 2</div>
+        {% if timing.stage2 and timing.stage2.elapsed_sec is not none %}
+        <div class="stat-value">{{ "%.1f"|format(timing.stage2.elapsed_sec) }}s</div>
+        {% if n_images %}
+        <div class="stat-detail">{{ "%.1f"|format(timing.stage2.elapsed_sec / n_images) }}s per image</div>
+        {% endif %}
+        {% else %}
+        <div class="stat-value">—</div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if workload %}
+    <h2>Workload</h2>
+    <p class="muted">
+      Workload is Stage 1 time plus Stage 2 time.
+      Stage 1 cost is seconds per confirm-or-ignore decision on a model box
+      (adds drawn in Stage 2 are not counted here).
+      Stage 2 cost is seconds of miss-search per image.
+      The time ratio is Stage 2 seconds per image divided by Stage 1 seconds per
+      decision — values above 1 mean hunting for misses costs more than sorting
+      one prediction.
+    </p>
+    <div class="stat-grid workload-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total</div>
+        <div class="stat-value">{{ workload.display.w }}</div>
+        <div class="stat-detail">T₁ + T₂</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Stage 1 rate</div>
+        <div class="stat-value">{{ workload.display.beta }}</div>
+        <div class="stat-detail">{{ workload.n_s1 }} model box{{ '' if workload.n_s1 == 1 else 'es' }} reviewed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Stage 2 rate</div>
+        <div class="stat-value">{{ workload.display.alpha_img }}</div>
+        <div class="stat-detail">{{ workload.n_images }} image{{ '' if workload.n_images == 1 else 's' }} searched</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Time ratio</div>
+        <div class="stat-value">{{ workload.display.rho }}</div>
+        <div class="stat-detail">FN search vs one Stage 1 click</div>
+      </div>
+      {% if workload.alpha_s_per_fn is not none %}
+      <div class="stat-card">
+        <div class="stat-label">Per miss found</div>
+        <div class="stat-value">{{ workload.display.alpha_fn }}</div>
+        <div class="stat-detail">{{ workload.n_added }} added in Stage 2</div>
+      </div>
+      {% endif %}
+    </div>
+    {% if workload.display.gt_line %}
+    <p class="muted">{{ workload.display.gt_line }}</p>
+    {% endif %}
+    {% endif %}
+
+    {% if gt %}
+    <section class="fn-section">
+      <h2>Missed detections (FN)</h2>
+      <p class="muted" id="fn-help">
+        Thumbnails are ground-truth boxes with no confirmed detection of the same class
+        at IoU ≥ {{ gt.iou_thresh }}. Matching is one-to-one: if several boxes overlap,
+        the pair with the highest IoU is the true positive. Open the full image to compare
+        GT with all Stage 1 boxes (confirmed, ignored, and unreviewed) plus Stage 2 additions.
+      </p>
+      <p id="fn-info" class="muted">—</p>
+      <div id="fn-grid" class="patch-grid"></div>
+    </section>
+    {% endif %}
+  </main>
+
+  <dialog id="context-dialog">
+    <form method="dialog" class="dialog-head">
+      <strong id="ctx-title">Context</strong>
+      <button value="cancel" class="ghost">Close</button>
+    </form>
+    <div class="ctx-body">
+      <canvas id="ctx-canvas"></canvas>
+      <div class="overlay-legend">
+        <span><i class="swatch gt"></i> GT / FN: gold dashed (IoU vs best confirmed)</span>
+        <span><i class="swatch focused"></i> This FN (lime halo)</span>
+        <span><i class="swatch confirmed"></i> TP: confirmed match (IoU)</span>
+        <span><i class="swatch ignored"></i> Ignored (red) / FP: extra confirmed (IoU)</span>
+        <span><i class="swatch clear"></i> Unreviewed (dashed)</span>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    window.CATEGORIES = {{ categories | tojson }};
+    window.HAS_GT = {{ 'true' if gt else 'false' }};
+    window.RESULTS_COMPARE = {{ (compare | default('timed')) | tojson }};
+  </script>
+  <script src="/static/review-common.js?v={{ asset_v }}"></script>
+  <script src="/static/results.js?v={{ asset_v }}"></script>
+</body>
+</html>

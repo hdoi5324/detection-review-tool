@@ -1,0 +1,9 @@
+<span class="field-inline" id="class-filter-field">
+  <label for="class-filter">Class</label>
+  <select id="class-filter">
+    <option value="">All classes</option>
+    {% for c in categories %}
+    <option value="{{ c.name }}">{{ c.name }}</option>
+    {% endfor %}
+  </select>
+</span>

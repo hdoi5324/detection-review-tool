@@ -1,0 +1,13 @@
+{% for p in intro.paragraphs %}
+<p>{{ p }}</p>
+{% endfor %}
+{% if intro.tasks %}
+<ol>
+  {% for t in intro.tasks %}
+  <li>{{ t }}</li>
+  {% endfor %}
+</ol>
+{% endif %}
+{% if intro.hint %}
+<p class="hint">{{ intro.hint }}</p>
+{% endif %}

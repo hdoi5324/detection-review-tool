@@ -1,0 +1,146 @@
+{
+  "stage1_top_n": 50,
+  "stage1_min_score": 0.1,
+  "stage1_tour": [
+    {
+      "target": "#work-area",
+      "title": "Stage 1 — Review detections",
+      "body": "Thank you for participating in this study. The thumbnails are detections predicted by the model. Your job is to Confirm correct ones, update any incorrect classes, adjust boxes, and mark which ones to Ignore."
+    },
+    {
+      "target": "#exemplars",
+      "title": "Class examples",
+      "body": "The left panel shows examples for each class."
+    },
+    {
+      "target": "#grid",
+      "title": "Thumbnail grid",
+      "body": "Each thumbnail is one model prediction. Only Confirmed predictions will be saved for evaluation."
+    },
+    {
+      "target": ".patch-card",
+      "title": "Select one or more",
+      "body": "Click a thumbnail to select it (green outline). Shift-click a range, or Ctrl/Cmd-click to add or remove thumbnails.",
+      "demo": "selectOne"
+    },
+    {
+      "target": "#btn-confirm",
+      "title": "Confirm",
+      "body": "Marks selected predictions as correct and includes them in the final results.",
+      "demo": "clearSelection"
+    },
+    {
+      "target": "#relabel-field",
+      "title": "Update class",
+      "body": "Choose a class, then press Confirm to update the class and confirm in one step."
+    },
+    {
+      "target": "#btn-ignore",
+      "title": "Ignore",
+      "body": "Marks the detection as incorrect and it will not be included in the final results."
+    },
+    {
+      "target": "#btn-clear",
+      "title": "Undo",
+      "body": "Resets selected detections back to unreviewed (neither confirmed nor ignored)."
+    },
+    {
+      "target": "#grid .patch-card .expand-btn",
+      "title": "Full-image view",
+      "body": "See the selected detection on the full image. From the popup you can Confirm, relabel, resize the box, or Ignore."
+    },
+    {
+      "targets": ["#class-filter-field", "#prob-filter"],
+      "target": "#class-filter-field",
+      "title": "Class and probability filters",
+      "body": "Filter the grid by class and/or by prediction probability."
+    },
+    {
+      "target": ".status-filters",
+      "title": "Filter by status",
+      "body": "Toggle which unreviewed, confirmed, and ignored detections appear in the grid. Use Flagged only to show detections marked for later review."
+    },
+    {
+      "target": "#brightness-filter",
+      "title": "Brightness",
+      "body": "Brighten or darken the thumbnails and class examples. Reset returns to the original image. This is a display aid only."
+    },
+    {
+      "target": ".timer-box",
+      "title": "Timer",
+      "body": "Press Start to begin timing and enable interactions. Press Stop when you finish or need a break.",
+      "placement": "bottom"
+    }
+  ],
+  "stage2_tour": [
+    {
+      "target": "#work-area",
+      "title": "Stage 2 — Full image review",
+      "body": "Review each full image and add any detections the model missed. Stage 1 boxes are overlaid on the image."
+    },
+    {
+      "targets": [".stage2-chrome .canvas-zoom-bar", "#stage-scroll"],
+      "target": "#stage-scroll",
+      "title": "Image canvas",
+      "body": "Confirmed boxes have a thick class-coloured border. Ignored boxes are red. Unreviewed boxes use dashed lines. Click a box to select it (green outline). Ctrl/Cmd-click to add or remove boxes. Pinch or use the mouse wheel to zoom. Two-finger drag, the scrollbars, or Space and left-drag to pan when zoomed in."
+    },
+    {
+      "targets": ["#btn-confirm", "#draw-class-field"],
+      "target": "#btn-confirm",
+      "title": "Draw and confirm",
+      "body": "Drag on the image to draw a new box, choose a class, then press Confirm to save it. Confirm also applies to every selected box.",
+      "placement": "left"
+    },
+    {
+      "target": "#btn-ignore",
+      "title": "Ignore",
+      "body": "Mark the selected box or boxes as Ignored so they are not exported.",
+      "placement": "left"
+    },
+    {
+      "target": "#btn-clear",
+      "title": "Undo",
+      "body": "Reset the selected box or boxes to unreviewed.",
+      "placement": "left"
+    },
+    {
+      "target": "#btn-delete",
+      "title": "Delete",
+      "body": "Remove the selected box or boxes, or discard an unsaved draft box.",
+      "placement": "left"
+    },
+    {
+      "targets": ["#class-filter-field", "#prob-filter"],
+      "target": "#class-filter-field",
+      "title": "Class and probability filters",
+      "body": "Hide unreviewed and ignored boxes by class and/or prediction probability. Confirmed boxes stay visible when the probability filter would hide them. New draft boxes stay visible."
+    },
+    {
+      "target": ".status-filters",
+      "title": "Filter by status",
+      "body": "Toggle which unreviewed, confirmed, and ignored boxes appear on the image. Use Flagged only to show boxes marked for later review."
+    },
+    {
+      "target": "#btn-done-img",
+      "title": "Mark image as done",
+      "body": "Optional reminder for yourself that you have finished reviewing this image.",
+      "placement": "left"
+    },
+    {
+      "target": ".stage2 .pager-group",
+      "title": "Navigate images",
+      "body": "Use Prev and Next to move through the images."
+    },
+    {
+      "target": "#brightness-filter",
+      "title": "Brightness",
+      "body": "Brighten or darken the image. Reset returns to the original. This is a display aid only."
+    },
+    {
+      "target": ".timer-box",
+      "title": "Timer",
+      "body": "Press Start to begin timing and enable editing. Press Stop when you finish or need a break.",
+      "placement": "bottom"
+    }
+  ]
+}

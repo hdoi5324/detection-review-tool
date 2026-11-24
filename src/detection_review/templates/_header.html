@@ -1,0 +1,87 @@
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="study-name">
+      {% if header is defined %}
+      <span class="header-field">
+        <span class="field-label">{{ header.title.label }}:</span>
+        {{ header.title.value }}
+      </span>
+      {% if header.fields or dataset_filter %}
+      <span class="dataset-line muted">
+        {% for field in header.fields -%}
+        <span class="header-field">{% if not loop.first %} · {% endif %}<span class="field-label">{{ field.label }}:</span> {{ field.value }}</span>
+        {%- endfor %}
+        {% if dataset_filter %}
+        <span class="header-field">{% if header.fields %} · {% endif %}{{ dataset_filter }}</span>
+        {% endif %}
+      </span>
+      {% endif %}
+      {% else %}
+      {{ progress.study_id if progress is defined else study_id }}
+      {% endif %}
+    </div>
+    <nav class="stepper" aria-label="Review stages">
+      {% if stage == "stage1" %}
+      <span class="step current">Stage 1</span>
+      <span class="stepper-sep" aria-hidden="true">→</span>
+      <a class="step" href="{{ '/stage2?mode=final' if final_review else '/stage2' }}">Stage 2</a>
+      <span class="stepper-sep" aria-hidden="true">→</span>
+      {% if final_review %}
+      <a class="step" href="/results">Results</a>
+      {% else %}
+      <span class="step">Results</span>
+      {% endif %}
+      {% elif stage == "stage2" %}
+      <a class="step" href="{{ '/stage1?mode=final' if final_review else '/stage1' }}">Stage 1</a>
+      <span class="stepper-sep" aria-hidden="true">→</span>
+      <span class="step current">Stage 2</span>
+      <span class="stepper-sep" aria-hidden="true">→</span>
+      {% if final_review %}
+      <a class="step" href="/results">Results</a>
+      {% else %}
+      <span class="step">Results</span>
+      {% endif %}
+      {% else %}
+      {% if final_review or stage == "results" %}
+      <a class="step" href="/stage1?mode=final">Stage 1</a>
+      <span class="stepper-sep" aria-hidden="true">→</span>
+      <a class="step" href="/stage2?mode=final">Stage 2</a>
+      {% else %}
+      <span class="step">Stage 1</span>
+      <span class="stepper-sep" aria-hidden="true">→</span>
+      <span class="step">Stage 2</span>
+      {% endif %}
+      <span class="stepper-sep" aria-hidden="true">→</span>
+      <span class="step current">Results</span>
+      {% endif %}
+    </nav>
+  </div>
+  <div class="timer-box">
+    {% if stage in ("stage1", "stage2") %}
+    {% if not final_review %}
+    <button type="button" id="btn-help" class="ghost help-btn" title="Walkthrough" aria-label="Walkthrough">?</button>
+    {% endif %}
+    {% if final_review %}
+    <span class="final-review-badge">QA/QC review — not timed</span>
+    {% endif %}
+    <span id="elapsed" class="time-pill">0.0s</span>
+    {% if not final_review %}
+    <div class="btn-pair">
+      <button id="btn-start" type="button" class="primary">Start</button>
+      <button id="btn-stop" type="button" class="ghost" disabled>Stop</button>
+    </div>
+    {% endif %}
+    {% endif %}
+    {% if stage == "stage1" %}
+    <a class="btn ghost" href="{{ '/stage2?mode=final' if final_review else '/stage2' }}">Stage 2 →</a>
+    {% elif stage == "stage2" %}
+    <a class="btn ghost" href="{{ '/stage1?mode=final' if final_review else '/stage1' }}">← Stage 1</a>
+    {% if not final_review %}
+    <button id="btn-complete" type="button" class="primary">Complete model</button>
+    {% endif %}
+    {% endif %}
+    {% if final_review and stage in ("stage1", "stage2") %}
+    <a class="btn ghost" href="/results">← Results</a>
+    {% endif %}
+  </div>
+</header>

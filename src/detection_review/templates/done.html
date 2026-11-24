@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Study complete</title>
+  {% include "_fonts.html" %}
+  <link rel="stylesheet" href="/static/app.css?v={{ asset_v }}" />
+</head>
+<body class="auth-page">
+  <main class="login-wrap">
+    <p class="eyebrow">Detection Review Tool</p>
+    <h1>Study complete</h1>
+    <p>Thanks, {{ progress.tester }}. All {{ progress.total }} model{{ "s" if progress.total != 1 else "" }} {{ "are" if progress.total != 1 else "is" }} done.</p>
+    <p><a class="btn ghost" href="/stage1?mode=final">QA/QC review</a></p>
+    <form method="post" action="/logout" class="login-form">
+      <button type="submit" class="primary">Log out</button>
+    </form>
+  </main>
+</body>
+</html>

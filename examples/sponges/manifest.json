@@ -1,0 +1,21 @@
+{
+ "study_id": "sponges_example",
+ "datasets": [
+  {
+   "id": "sponges_0_100",
+   "images_dir": "../../../SAM3-FSOD/datasets/utas_sponges_20054/images",
+   "predictions_coco": "slice_0_100/predictions.json",
+   "support_coco": "support.json",
+   "support_images_dir": "support_images",
+   "ground_truth_coco": "slice_0_100/ground_truth.json"
+  },
+  {
+   "id": "sponges_200_300",
+   "images_dir": "../../../SAM3-FSOD/datasets/utas_sponges_20054/images",
+   "predictions_coco": "slice_200_300/predictions.json",
+   "support_coco": "support.json",
+   "support_images_dir": "support_images",
+   "ground_truth_coco": "slice_200_300/ground_truth.json"
+  }
+ ]
+}
