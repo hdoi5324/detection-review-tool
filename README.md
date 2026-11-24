@@ -1,5 +1,14 @@
 # Detection Review Tool
 
+<p align="center">
+    <img src="figs/graphical_abstract.png" width="100%" alt="Graphical abstract: SAM3 few-shot detections from exemplar examples are reviewed in the two-stage Detection Review Tool to produce annotated images"></a> <br>
+    Graphical abstract from the accompanying paper: exemplar examples prompt
+    the <a href="https://github.com/hdoi5324/SAM3-FSOD">SAM3 few-shot detector</a>,
+    and its predicted detections are verified in this tool — Stage 1 reviews
+    and corrects predicted detections, Stage 2 reviews the full image for
+    missed detections — to produce the final annotated images.
+</p>
+
 A two-stage, timed web tool for reviewing object-detection predictions
 against a directory of images. It is designed for the common situation in
 which a detector (for example the few-shot detector in
