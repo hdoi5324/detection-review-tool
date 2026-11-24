@@ -46,10 +46,17 @@ class SpongesExampleTests(unittest.TestCase):
 
     def test_support_images_present(self):
         support = _load(EXAMPLE / "support.json")
-        self.assertEqual(len(support["images"]), 30)
+        self.assertEqual(len(support["images"]), len(support["annotations"]))
+        self.assertEqual(len(support["images"]), 32)
+        by_id = {im["id"]: im for im in support["images"]}
         for im in support["images"]:
             self.assertNotIn("/", im["file_name"])
             self.assertTrue((EXAMPLE / "support_images" / im["file_name"]).is_file())
+        # Each support image is the exemplar crop itself: the annotation
+        # bbox must cover the whole image exactly.
+        for ann in support["annotations"]:
+            im = by_id[ann["image_id"]]
+            self.assertEqual(ann["bbox"], [0, 0, im["width"], im["height"]])
 
 
 if __name__ == "__main__":

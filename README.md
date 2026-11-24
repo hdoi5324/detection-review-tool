@@ -104,8 +104,9 @@ COCO predictions — including SAM3-FSOD, whose runs write
 `examples/sponges/` contains a complete, ready-to-run example on the
 UTAS sponges data used with SAM3-FSOD: two slices of 100 query images
 (`sponges_0_100`, `sponges_200_300`) with saved model predictions, ground
-truth, and a shared support set (30 exemplar images, included downscaled in
-`examples/sponges/support_images/`). The predictions were produced with the
+truth, and a shared support set (32 exemplar crops, included in
+`examples/sponges/support_images/`; each support image is the annotated
+crop itself, with its box covering the whole crop). The predictions were produced with the
 SAM3-FSOD few-shot method (K = 10 exemplars per class).
 
 The query images themselves are **not** in this repository. Download them
